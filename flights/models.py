@@ -1,6 +1,10 @@
 import logging
 
-from sqlalchemy import Column, DateTime, String
+from sqlalchemy import (
+    Column, Integer, DateTime, String,
+    Table, ForeignKey,
+)
+from sqlalchemy.orm import relationship
 
 from .database import Base, db_engine
 
@@ -23,6 +27,25 @@ class Segment(Base):
     def __str__(self):
         return '%(flight_number)s: %(source)s @ %(departure)s ' \
                '-> %(destination)s @ %(arrival)s' % self.__dict__
+
+
+class Itinerary(Base):
+    __tablename__ = 'itinerary'
+
+    id = Column(Integer, primary_key=True)
+    segments = relationship('Segment', secondary=lambda: itinerary_segment)
+
+    def __repr__(self):
+        return '<Itinerary %d>' % self.id
+
+    def __str__(self):
+        return ','.join([segment.flight_number for segment in self.segments])
+
+
+itinerary_segment = Table('itinerary_segment', Base.metadata,
+    Column('itinerary_id', Integer, ForeignKey('itinerary.id')),
+    Column('flight_number', String(5), ForeignKey('segment.flight_number')),
+)
 
 
 def create_db():

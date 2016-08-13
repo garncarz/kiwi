@@ -2,16 +2,15 @@
 
 import sys
 
-from flights import models, parser
-
-
-def load():
-    parser.parse_csv(iter(sys.stdin.readline, ''))
+from flights import models, parser, engine
 
 
 def main():
     models.create_db()
-    load()
+    parser.parse_csv(iter(sys.stdin.readline, ''))
+    engine.find_itineraries()
+    for itinerary in models.Itinerary.query.all():
+        print(itinerary)
 
 
 if __name__ == '__main__':
