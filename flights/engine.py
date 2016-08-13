@@ -8,13 +8,24 @@ CHANGE_MIN = timedelta(hours=1)
 CHANGE_MAX = timedelta(hours=4)
 
 
+def _find_itineraries(history):
+    previous = history[-1]
+
+    for actual in Segment.query \
+            .filter(Segment.source == previous.destination) \
+            .filter(Segment.departure >= previous.arrival + CHANGE_MIN) \
+            .filter(Segment.departure <= previous.arrival + CHANGE_MAX) \
+            .all():
+
+        segments = history + [actual]
+
+        itinerary = Itinerary(segments=segments)
+        db_session.add(itinerary)
+        db_session.commit()
+
+        _find_itineraries(segments)
+
+
 def find_itineraries():
     for first in Segment.query.all():
-        for second in Segment.query \
-                .filter(Segment.source == first.destination) \
-                .filter(Segment.departure >= first.arrival + CHANGE_MIN) \
-                .filter(Segment.departure <= first.arrival + CHANGE_MAX) \
-                .all():
-            itinerary = Itinerary(segments=[first, second])
-            db_session.add(itinerary)
-            db_session.commit()
+        _find_itineraries([first])
