@@ -1,0 +1,3 @@
+*.sqlite*
+
+flights/settings_local.py
