@@ -17,13 +17,18 @@ def _find_itineraries(history):
             .filter(Segment.departure <= previous.arrival + CHANGE_MAX) \
             .all():
 
-        segments = history + [actual]
+        for been_there in history:
+            if been_there.source == actual.source and \
+                    been_there.destination == actual.destination:
+                break
+        else:
+            segments = history + [actual]
 
-        itinerary = Itinerary(segments=segments)
-        db_session.add(itinerary)
-        db_session.commit()
+            itinerary = Itinerary(segments=segments)
+            db_session.add(itinerary)
+            db_session.commit()
 
-        _find_itineraries(segments)
+            _find_itineraries(segments)
 
 
 def find_itineraries():
