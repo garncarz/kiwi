@@ -14,4 +14,5 @@ def db_prepare():
 @pytest.yield_fixture(scope='function', autouse=True)
 def db_clean():
     yield
+    models.Itinerary.query.delete()
     models.Segment.query.delete()

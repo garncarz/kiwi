@@ -1,3 +1,4 @@
+from datetime import timedelta as td
 import random
 import string
 
@@ -34,3 +35,8 @@ class Segment(SQLAlchemyModelFactory):
     departure = lazy_date_time
     arrival = lazy_date_time  # TODO = departure + few hours
     flight_number = lazy_flight_number
+
+
+def next_segment(segment, hours):
+    return Segment(source=segment.destination,
+                   departure=segment.arrival + td(hours=hours))
