@@ -25,3 +25,6 @@ Run `cat input.csv | ./find_combinations.py`.
 
 Run `./test.sh`.
 Test coverage is located under the `htmlcov` directory then.
+
+
+<!-- ❄️ Hello to the GitHub Archive! ❄️ -->
